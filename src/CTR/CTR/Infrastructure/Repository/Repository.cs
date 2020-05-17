@@ -14,12 +14,19 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<T>(obs =>
             {
-                using(var context = ContextFactory.Create())
+                try
                 {
-                    var ret = context.Set<T>().Add(entity);
-                    context.SaveChanges();
-                    obs.OnNext(ret);
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        var ret = context.Set<T>().Add(entity);
+                        context.SaveChanges();
+                        obs.OnNext(ret);
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -30,11 +37,18 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<bool>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    context.Set<T>().AddOrUpdate(entity);
-                    obs.OnNext(context.SaveChanges() > 0);
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        context.Set<T>().AddOrUpdate(entity);
+                        obs.OnNext(context.SaveChanges() > 0);
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -45,11 +59,18 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<T>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    var ret = context.Set<T>().Remove(entity);
-                    obs.OnNext(ret);
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        var ret = context.Set<T>().Remove(entity);
+                        obs.OnNext(ret);
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -60,11 +81,18 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<bool>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    context.Set<T>().Where(predicate).ToList().ForEach(p => context.Set<T>().Remove(p));
-                    obs.OnNext(context.SaveChanges() > 0);
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        context.Set<T>().Where(predicate).ToList().ForEach(p => context.Set<T>().Remove(p));
+                        obs.OnNext(context.SaveChanges() > 0);
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -75,11 +103,18 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<bool>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    context.Set<T>().ToList().ForEach(p => context.Set<T>().Remove(p));
-                    obs.OnNext(context.SaveChanges() > 0);
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        context.Set<T>().ToList().ForEach(p => context.Set<T>().Remove(p));
+                        obs.OnNext(context.SaveChanges() > 0);
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -90,10 +125,17 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<T>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    obs.OnNext(context.Set<T>().FirstOrDefault());
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        obs.OnNext(context.Set<T>().FirstOrDefault());
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -104,10 +146,17 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<T>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    obs.OnNext(context.Set<T>().Where(predicate).FirstOrDefault());
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        obs.OnNext(context.Set<T>().Where(predicate).FirstOrDefault());
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -118,10 +167,17 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<IEnumerable<T>>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    obs.OnNext(context.Set<T>().Where(predicate).ToList());
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        obs.OnNext(context.Set<T>().Where(predicate).ToList());
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
@@ -132,10 +188,17 @@ namespace CTR.Infrastructure.Repository
         {
             return Observable.Create<IEnumerable<T>>(obs =>
             {
-                using (var context = ContextFactory.Create())
+                try
                 {
-                    obs.OnNext(context.Set<T>().ToList());
-                    obs.OnCompleted();
+                    using (var context = ContextFactory.Create())
+                    {
+                        obs.OnNext(context.Set<T>().ToList());
+                        obs.OnCompleted();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    obs.OnError(ex);
                 }
                 return Disposable.Empty;
             });
