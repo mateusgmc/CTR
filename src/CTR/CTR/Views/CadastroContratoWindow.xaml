@@ -62,7 +62,7 @@
                             <Border Margin="5" Grid.Row="2" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">RG*:</TextBlock>
                             </Border>
-                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1" Text="{Binding RG}" />
+                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1" Text="{Binding Rg}" />
 
                             <Border Margin="5" Grid.Row="3" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Org.EXP*:</TextBlock>
