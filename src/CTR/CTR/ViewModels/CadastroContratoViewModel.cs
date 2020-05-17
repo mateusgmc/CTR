@@ -173,7 +173,7 @@ namespace CTR.ViewModels
             // este fluxo irá propagar uma notificação que fará com que o comando abaixo não possa ser executado.
 
             var salvarCanExecute = Observable.CombineLatest(
-                    this.WhenAny(s => s.IsBusy, e => e.Value),
+                    this.WhenAnyValue(s => s.IsBusy),
                     nomeHasErrors,
                     cpfHasErros,
                     rgHasErros,
