@@ -64,6 +64,10 @@ namespace CTR.ViewModels
                     {
                         Cidades.Add(cidade);
                     }
+                },
+                ex =>
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
                 });
 
             // Carrega as secretarias do banco de maneira assíncrona
