@@ -1,6 +1,5 @@
 ﻿using CTR.Infrastructure.Repository;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
@@ -16,12 +15,9 @@ namespace CTR.ViewModels
         {
             Repository = repository;
             UiDispatcherScheduler = uiDispatcherScheduler;
-
-            this.WhenAnyValue(s => s.ObservingCount)
-                .ToProperty(this, nameof(IsBusy));
         }
 
-        [Reactive] public int ObservingCount { get; set; }
+        public int ObservingCount { get; set; }
 
         public bool IsBusy
         {

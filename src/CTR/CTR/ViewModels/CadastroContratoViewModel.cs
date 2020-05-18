@@ -2,7 +2,6 @@
 using CTR.Models.POCO;
 using CTR.Utils;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -19,13 +18,55 @@ namespace CTR.ViewModels
         {
             // NOTE: Inicialização dos campos
 
-            EstadoCivilSelecionado = EstadosCivis.First();
-            NaturalidadeSelecionada = Naturalidades.First();
+            // Carrega os contratos do banco
+            Repository.GetAll<Contrato>()
+                .Busy(this)
+                .Subscribe(contratos =>
+                {
+                    foreach (var contrato in contratos)
+                    {
+                        ContratosSalvos.Add(contrato);
+                    }
+                },
+                ex =>
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
+                });
+
+            // Carrega as naturalidades do banco de maneira assíncrona
+            Repository.GetAll<Naturalidade>()
+                .Busy(this)
+                .Subscribe(naturalidades =>
+                {
+                    foreach (var naturalidade in naturalidades)
+                    {
+                        Naturalidades.Add(naturalidade);
+                    }
+                    NaturalidadeSelecionada = Naturalidades.First();
+                },
+                ex =>
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
+                });
+
+            Repository.GetAll<EstadoCivil>()
+                .Busy(this)
+                .Subscribe(estadosCivis =>
+                {
+                    foreach (var estadoCivil in estadosCivis)
+                    {
+                        EstadosCivis.Add(estadoCivil);
+                    }
+                    EstadoCivilSelecionado = EstadosCivis.First();
+                },
+                ex =>
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
+                });
 
             // Carrega os estados do banco de maneira assíncrona
             Repository.GetAll<Estado>()
                 .Busy(this)
-                .ObserveOn(UiDispatcherScheduler)
                 .Subscribe(estados =>
                 {
                     foreach(var estado in estados)
@@ -41,7 +82,6 @@ namespace CTR.ViewModels
             // Carrega os bairros do banco de maneira assíncrona
             Repository.GetAll<Bairro>()
                 .Busy(this)
-                .ObserveOn(UiDispatcherScheduler)
                 .Subscribe(bairros =>
                 {
                     foreach (var bairro in bairros)
@@ -57,7 +97,6 @@ namespace CTR.ViewModels
             // Carrega os cidades do banco de maneira assíncrona
             Repository.GetAll<Cidade>()
                 .Busy(this)
-                .ObserveOn(UiDispatcherScheduler)
                 .Subscribe(cidades =>
                 {
                     foreach (var cidade in cidades)
@@ -73,7 +112,6 @@ namespace CTR.ViewModels
             // Carrega as secretarias do banco de maneira assíncrona
             Repository.GetAll<Secretaria>()
                 .Busy(this)
-                .ObserveOn(UiDispatcherScheduler)
                 .Subscribe(secretarias =>
                 {
                     foreach (var secretaria in secretarias)
@@ -89,7 +127,6 @@ namespace CTR.ViewModels
             // Carrega as jornadas do banco de maneira assíncrona
             Repository.GetAll<Jornada>()
                 .Busy(this)
-                .ObserveOn(UiDispatcherScheduler)
                 .Subscribe(jornadas =>
                 {
                     foreach (var jornada in jornadas)
@@ -124,52 +161,43 @@ namespace CTR.ViewModels
             ObservarErroCampoObrigatorio(orgExpHasErros, nameof(OrgExp));
 
 
-            var estadoCivilHasErros = this.WhenAnyValue(s => s.EstadoCivilSelecionado, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(estadoCivilHasErros, nameof(EstadoCivilSelecionado));
-
-
-            var naturalidadeHasErros = this.WhenAnyValue(s => s.NaturalidadeSelecionada, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(naturalidadeHasErros, nameof(NaturalidadeSelecionada));
-
-
-            var estadoHasErros = this.WhenAny(s => s.EstadoSelecionado, e => e is null);
-            ObservarErroCampoObrigatorio(estadoHasErros, nameof(Estados));
-
-
             var enderecoHasErros = this.WhenAnyValue(s => s.Endereco, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(estadoHasErros, nameof(Endereco));
+            ObservarErroCampoObrigatorio(enderecoHasErros, nameof(Endereco));
 
 
-            var bairroHasErros = this.WhenAny(s => s.BairroSelecionado, e => e is null);
-            ObservarErroCampoObrigatorio(bairroHasErros, nameof(Bairros));
+            var estadoCivilHasErros = this.WhenAny(s => s.EstadoCivilSelecionado, e => e.Value is null);
 
 
-            var cidadeHasErros = this.WhenAny(s => s.CidadeSelecionada, e => e is null);
-            ObservarErroCampoObrigatorio(cidadeHasErros, nameof(Cidades));
+            var naturalidadeHasErros = this.WhenAny(s => s.NaturalidadeSelecionada, e => e.Value is null);
 
 
-            var secretariaHasErros = this.WhenAny(s => s.SecretariaSelecionada, e => e is null);
-            ObservarErroCampoObrigatorio(cidadeHasErros, nameof(Secretarias));
+            var estadoHasErros = this.WhenAny(s => s.EstadoSelecionado, e => e.Value is null);
 
 
-            var orgaoHasErros = this.WhenAny(s => s.OrgaoSelecionado, e => e is null);
-            ObservarErroCampoObrigatorio(orgaoHasErros, nameof(Orgaos));
+            var bairroHasErros = this.WhenAny(s => s.BairroSelecionado, e => e.Value is null);
 
 
-            var deparmentoHasErros = this.WhenAny(s => s.DepartamentoSelecionado, e => e is null);
-            ObservarErroCampoObrigatorio(deparmentoHasErros, nameof(Departamentos));
+            var cidadeHasErros = this.WhenAny(s => s.CidadeSelecionada, e => e.Value is null);
 
 
-            var dotacaoHasErros = this.WhenAny(s => s.DotacaoSelecionado, e => e is null);
-            ObservarErroCampoObrigatorio(dotacaoHasErros, nameof(Dotacoes));
+            var secretariaHasErros = this.WhenAny(s => s.SecretariaSelecionada, e => e.Value is null);
 
 
-            var descricaoVinculoHasErros = this.WhenAny(s => s.DescricaoVinculoSelecionado, e => e is null);
-            ObservarErroCampoObrigatorio(descricaoVinculoHasErros, nameof(DescricaoVinculos));
+            var orgaoHasErros = this.WhenAny(s => s.OrgaoSelecionado, e => e.Value is null);
 
 
-            var cargoHasErros = this.WhenAny(s => s.CargoSelecionado, e => e is null);
-            ObservarErroCampoObrigatorio(cargoHasErros, nameof(Cargos));
+            var deparmentoHasErros = this.WhenAny(s => s.DepartamentoSelecionado, e => e.Value is null);
+
+
+            var dotacaoHasErros = this.WhenAny(s => s.DotacaoSelecionado, e => e.Value is null);
+
+
+            var descricaoVinculoHasErros = this.WhenAny(s => s.DescricaoVinculoSelecionado, e => e.Value is null);
+
+
+            var cargoHasErros = this.WhenAny(s => s.CargoSelecionado, e => e.Value is null);
+
+            var jornadaHasErros = this.WhenAny(s => s.JornadaSelecionada, e => e.Value is null);
 
 
             // Criamos um fluxo que é a combinação de todos os fluxos de validação acima.
@@ -193,7 +221,8 @@ namespace CTR.ViewModels
                     deparmentoHasErros,
                     dotacaoHasErros,
                     descricaoVinculoHasErros,
-                    cargoHasErros)
+                    cargoHasErros,
+                    jornadaHasErros)
                 .Select(observables => !observables.Any(r => r == true));
 
             SalvarCommand = ReactiveCommand.Create(SalvarExecute, salvarCanExecute);
@@ -202,13 +231,7 @@ namespace CTR.ViewModels
 
             // Regras de negócio
 
-            // Caso o cargo selecionado mude, alteramos o campo de salário
-            this.WhenAnyValue(s => s.CargoSelecionado)
-                .ToProperty(this, nameof(Salario));
-
-
             // Ao selecionar uma nova secretaria carregamos dados referentes a esta secretaria
-
             this.WhenAnyValue(s => s.SecretariaSelecionada)
                 .Subscribe(newSecretaria =>
                 {
@@ -216,14 +239,12 @@ namespace CTR.ViewModels
                     {
                         Repository.Get<DescricaoVinculo>(e => e.SecretariaId == newSecretaria.SecretariaId)
                             .Busy(this)
-                            .ObserveOn(UiDispatcherScheduler)
                             .Subscribe(descricaoVinculos =>
                             {
                                 foreach(var descricaoVinculo in descricaoVinculos)
                                 {
                                     DescricaoVinculos.Add(descricaoVinculo);
                                 }
-                                DescricaoVinculoSelecionado = DescricaoVinculos.First();
                             },
                             ex =>
                             {
@@ -232,14 +253,12 @@ namespace CTR.ViewModels
 
                         Repository.Get<Orgao>(e => e.SecretariaId == newSecretaria.SecretariaId)
                             .Busy(this)
-                            .ObserveOn(UiDispatcherScheduler)
                             .Subscribe(orgaos =>
                             {
                                 foreach (var orgao in orgaos)
                                 {
                                     Orgaos.Add(orgao);
                                 }
-                                OrgaoSelecionado = Orgaos.First();
                             },
                             ex =>
                             {
@@ -248,14 +267,12 @@ namespace CTR.ViewModels
 
                         Repository.Get<Departamento>(e => e.SecretariaId == newSecretaria.SecretariaId)
                             .Busy(this)
-                            .ObserveOn(UiDispatcherScheduler)
                             .Subscribe(departamentos =>
                             {
                                 foreach (var departamento in departamentos)
                                 {
                                     Departamentos.Add(departamento);
                                 }
-                                DepartamentoSelecionado = Departamentos.First();
                             },
                             ex =>
                             {
@@ -264,14 +281,26 @@ namespace CTR.ViewModels
 
                         Repository.Get<Dotacao>(e => e.SecretariaId == newSecretaria.SecretariaId)
                             .Busy(this)
-                            .ObserveOn(UiDispatcherScheduler)
                             .Subscribe(dotacoes =>
                             {
                                 foreach (var dotacao in dotacoes)
                                 {
                                     Dotacoes.Add(dotacao);
                                 }
-                                DotacaoSelecionado = Dotacoes.First();
+                            },
+                            ex =>
+                            {
+                                System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
+                            });
+
+                        Repository.Get<Cargo>(e => e.SecretariaId == newSecretaria.SecretariaId)
+                            .Busy(this)
+                            .Subscribe(cargos =>
+                            {
+                                foreach (var cargo in cargos)
+                                {
+                                    Cargos.Add(cargo);
+                                }
                             },
                             ex =>
                             {
@@ -281,78 +310,70 @@ namespace CTR.ViewModels
                 });
         }
 
-        [Reactive] public string Nome { get; set; }
 
-        [Reactive] public string Cpf { get; set; }
+        public string Nome { get; set; }
 
-        [Reactive] public string Rg { get; set; }
+        public string Cpf { get; set; }
 
-        [Reactive] public string OrgExp { get; set; }
+        public string Rg { get; set; }
 
-        [Reactive] public string EstadoCivilSelecionado { get; set; }
+        public string OrgExp { get; set; }
 
-        public ObservableCollection<string> EstadosCivis { get; } = new ObservableCollection<string>
-        {
-            "CASADO(A)",
-            "SOLTEIRO(A)",
-            "VIÚVO(A)",
-            "UNIÃO ESTÁVEL",
-            "DIVORCIADO(A)"
-        };
+        public EstadoCivil EstadoCivilSelecionado { get; set; }
 
-        [Reactive] public string NaturalidadeSelecionada { get; set; }
+        public ObservableCollection<EstadoCivil> EstadosCivis { get; } = new ObservableCollection<EstadoCivil>();
 
-        public ObservableCollection<string> Naturalidades { get; } = new ObservableCollection<string>
-        {
-            "BRASILEIRO NATO",
-            "BRASILEIRO NATURALIZADO",
-            "ESTRANGEIRO"
-        };
+        public Naturalidade NaturalidadeSelecionada { get; set; }
 
-        [Reactive] public Estado EstadoSelecionado { get; set; }
+        public ObservableCollection<Naturalidade> Naturalidades { get; } = new ObservableCollection<Naturalidade>();
+
+        public Estado EstadoSelecionado { get; set; }
         public ObservableCollection<Estado> Estados { get; } = new ObservableCollection<Estado>();
 
-        [Reactive] public string Endereco { get; set; }
+        public string Endereco { get; set; }
 
-        [Reactive] public Bairro BairroSelecionado { get; set; }
+        public Bairro BairroSelecionado { get; set; }
         public ObservableCollection<Bairro> Bairros { get; } = new ObservableCollection<Bairro>();
 
-        [Reactive] public Cidade CidadeSelecionada { get; set; }
+        public Cidade CidadeSelecionada { get; set; }
         public ObservableCollection<Cidade> Cidades { get; } = new ObservableCollection<Cidade>();
 
-        [Reactive] public string Email { get; set; } = "@";
+        public string Email { get; set; } = "@";
 
-        [Reactive] public string Num { get; set; }
+        public string Num { get; set; }
 
-        [Reactive] public string Telefone { get; set; }
+        public string Telefone { get; set; }
 
-        [Reactive] public Jornada JornadaSelecionada { get; set; }
+        public Jornada JornadaSelecionada { get; set; }
         public ObservableCollection<Jornada> Jornadas { get; } = new ObservableCollection<Jornada>();
 
-        [Reactive] public Secretaria SecretariaSelecionada { get; set; }
+        public Secretaria SecretariaSelecionada { get; set; }
         public ObservableCollection<Secretaria> Secretarias { get; } = new ObservableCollection<Secretaria>();
 
-        [Reactive] public Orgao OrgaoSelecionado { get; set; }
+        public Orgao OrgaoSelecionado { get; set; }
         public ObservableCollection<Orgao> Orgaos { get; } = new ObservableCollection<Orgao>();
 
-        [Reactive] public Departamento DepartamentoSelecionado { get; set; }
+        public Departamento DepartamentoSelecionado { get; set; }
         public ObservableCollection<Departamento> Departamentos { get; } = new ObservableCollection<Departamento>();
 
-        [Reactive] public Dotacao DotacaoSelecionado { get; set; }
+        public Dotacao DotacaoSelecionado { get; set; }
         public ObservableCollection<Dotacao> Dotacoes { get; } = new ObservableCollection<Dotacao>();
 
-        [Reactive] public DescricaoVinculo DescricaoVinculoSelecionado { get; set; }
+        public DescricaoVinculo DescricaoVinculoSelecionado { get; set; }
         public ObservableCollection<DescricaoVinculo> DescricaoVinculos { get; } = new ObservableCollection<DescricaoVinculo>();
 
-        [Reactive] public string Alocacao { get; set; }
+        public string Alocacao { get; set; }
 
         public decimal Salario { get => CargoSelecionado?.Salario ?? 0; }
-        [Reactive] public Cargo CargoSelecionado { get; set; }
+        public Cargo CargoSelecionado { get; set; }
         public ObservableCollection<Cargo> Cargos { get; } = new ObservableCollection<Cargo>();
 
-        [Reactive] public DateTime VigenciaInicio { get; set; } = DateTime.Now;
+        public DateTime VigenciaInicio { get; set; } = DateTime.Now;
 
-        [Reactive] public DateTime VigenciaFim { get; set; } = DateTime.Now;
+        public DateTime VigenciaFim { get; set; } = DateTime.Now;
+
+
+        public ObservableCollection<Contrato> ContratosSalvos { get; } = new ObservableCollection<Contrato>();
 
 
 
@@ -394,10 +415,15 @@ namespace CTR.ViewModels
                 VigenciaFim = VigenciaFim
             };
 
-            Repository.Add<Contrato>(contrato)
-                .Subscribe(c =>
+            Repository.AddOrUpdate<Contrato>(contrato)
+                .Busy(this)
+                .Subscribe(e =>
                 {
                     System.Windows.Forms.MessageBox.Show("Contrato salvo com sucesso!");
+                    if (!ContratosSalvos.Contains(contrato))
+                    {
+                        ContratosSalvos.Add(contrato);
+                    }
                 },
                 ex =>
                 {

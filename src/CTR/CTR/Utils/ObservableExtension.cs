@@ -17,6 +17,7 @@ namespace CTR.Utils
                 {
                     observable
                         .SubscribeOn(scheduler)
+                        .ObserveOn(viewModel.UiDispatcherScheduler)
                         .Subscribe(e => obs.OnNext(e), ex => obs.OnError(ex), () => obs.OnCompleted()),
 
                     Disposable.Create(() =>

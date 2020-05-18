@@ -1,4 +1,4 @@
-﻿using ReactiveUI;
+﻿using Prism.Mvvm;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace CTR.ViewModels
 {
-    public abstract class NotifyErrorInfoViewModel : ReactiveObject, INotifyDataErrorInfo
+    public abstract class NotifyErrorInfoViewModel : BindableBase, INotifyDataErrorInfo
     {
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 

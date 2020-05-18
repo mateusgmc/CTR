@@ -10,8 +10,6 @@ namespace CTR.Infrastructure
         public CTRContext(string nameOrConnectionString) :
             base(nameOrConnectionString)
         {
-            this.Configuration.LazyLoadingEnabled = false;
-            this.Configuration.ProxyCreationEnabled = false;
             Database.SetInitializer(new CTRInitializer());
         }
 
@@ -53,8 +51,14 @@ namespace CTR.Infrastructure
 
         public virtual DbSet<Jornada> Jornadas { get; set; }
 
+        public virtual DbSet<TipoJornada> TipoJornadas { get; set; }
+
         public virtual DbSet<Orgao> Orgaos { get; set; }
 
         public virtual DbSet<Secretaria> Secretarias { get; set; }
+
+        public virtual DbSet<Naturalidade> Naturalidades { get; set; }
+
+        public virtual DbSet<EstadoCivil> EstadoCivis { get; set; }
     }
 }

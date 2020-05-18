@@ -129,7 +129,7 @@ namespace CTR.Infrastructure.Repository
                 {
                     using (var context = ContextFactory.Create())
                     {
-                        obs.OnNext(context.Set<T>().FirstOrDefault());
+                        obs.OnNext(context.Set<T>().IncludeAll().FirstOrDefault());
                         obs.OnCompleted();
                     }
                 }
@@ -150,7 +150,7 @@ namespace CTR.Infrastructure.Repository
                 {
                     using (var context = ContextFactory.Create())
                     {
-                        obs.OnNext(context.Set<T>().Where(predicate).FirstOrDefault());
+                        obs.OnNext(context.Set<T>().IncludeAll().Where(predicate).FirstOrDefault());
                         obs.OnCompleted();
                     }
                 }
@@ -171,7 +171,7 @@ namespace CTR.Infrastructure.Repository
                 {
                     using (var context = ContextFactory.Create())
                     {
-                        obs.OnNext(context.Set<T>().Where(predicate).ToList());
+                        obs.OnNext(context.Set<T>().IncludeAll().Where(predicate).ToList());
                         obs.OnCompleted();
                     }
                 }
@@ -192,7 +192,7 @@ namespace CTR.Infrastructure.Repository
                 {
                     using (var context = ContextFactory.Create())
                     {
-                        obs.OnNext(context.Set<T>().ToList());
+                        obs.OnNext(context.Set<T>().IncludeAll().ToList());
                         obs.OnCompleted();
                     }
                 }

@@ -11,7 +11,7 @@
     WindowStartupLocation="CenterScreen" WindowState="Maximized"
     Language="PT-BR">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -23,6 +23,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Margin="20" HorizontalAlignment="Center" Grid.ColumnSpan="2">FICHA INDIVIDUAL DE CONTRATAÇÃO POR TEMPO INDETERMINADO</TextBlock>
@@ -52,32 +53,32 @@
                             <Border Margin="5" Grid.Row="0" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Nome*:</TextBlock>
                             </Border>
-                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Nome}" />
+                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Nome, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Border Margin="5" Grid.Row="1" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">CPF*:</TextBlock>
                             </Border>
-                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="1" Text="{Binding Cpf}" />
+                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="1" Text="{Binding Cpf, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Border Margin="5" Grid.Row="2" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">RG*:</TextBlock>
                             </Border>
-                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1" Text="{Binding Rg}" />
+                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1" Text="{Binding Rg, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Border Margin="5" Grid.Row="3" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Org.EXP*:</TextBlock>
                             </Border>
-                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="3" Grid.Column="1" Text="{Binding OrgExp}" />
+                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="3" Grid.Column="1" Text="{Binding OrgExp, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Border Margin="5" Grid.Row="1" Grid.Column="2" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Estado Civil*:</TextBlock>
                             </Border>
-                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="3" ItemsSource="{Binding EstadosCivis}" SelectedItem="{Binding EstadosCivilSelecionado}" />
+                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="3" ItemsSource="{Binding EstadosCivis}" DisplayMemberPath="Descricao" SelectedItem="{Binding EstadoCivilSelecionado}" />
 
                             <Border Margin="5" Grid.Row="2" Grid.Column="2" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Naturalidade*:</TextBlock>
                             </Border>
-                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" ItemsSource="{Binding Naturalidades}" SelectedItem="{Binding NaturalidadeSelecionada}" />
+                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="3" ItemsSource="{Binding Naturalidades}" DisplayMemberPath="Descricao" SelectedItem="{Binding NaturalidadeSelecionada}" />
 
                             <Border Margin="5" Grid.Row="3" Grid.Column="2" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Estado*:</TextBlock>
@@ -104,7 +105,7 @@
                             <Border Margin="5" Grid.Row="0" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Endereço*:</TextBlock>
                             </Border>
-                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="{Binding Endereco}" />
+                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Text="{Binding Endereco, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Border Margin="5" Grid.Row="1" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Bairro*:</TextBlock>
@@ -160,7 +161,7 @@
                             <Border Margin="5" Grid.Row="0" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Secretaria*:</TextBlock>
                             </Border>
-                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Secretaria}" SelectedItem="{Binding SecretariaSelecionada}" DisplayMemberPath="Nome" />
+                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Secretarias}" SelectedItem="{Binding SecretariaSelecionada}" DisplayMemberPath="Nome" />
 
                             <Border Margin="5" Grid.Row="1" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Orgão*:</TextBlock>
@@ -173,14 +174,19 @@
                             <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Departamentos}" SelectedItem="{Binding DepartamentoSelecionado}" DisplayMemberPath="Descricao" />
 
                             <Border Margin="5" Grid.Row="3" Grid.Column="0" Background="LightGray" Padding="5">
+                                <TextBlock VerticalAlignment="Center">Manutenção*:</TextBlock>
+                            </Border>
+                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Dotacoes}" SelectedItem="{Binding DotacaoSelecionado}" DisplayMemberPath="Descricao" />
+                            
+                            <Border Margin="5" Grid.Row="4" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Descrição*:</TextBlock>
                             </Border>
-                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding DescricaoVinculos}" SelectedItem="{Binding DescricaoVinculoSelecionado}" DisplayMemberPath="Descricao" />
+                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="4" Grid.Column="1" ItemsSource="{Binding DescricaoVinculos}" SelectedItem="{Binding DescricaoVinculoSelecionado}" DisplayMemberPath="Descricao" />
 
-                            <Border Margin="5" Grid.Row="4" Grid.Column="0" Background="LightGray" Padding="5">
+                            <Border Margin="5" Grid.Row="5" Grid.Column="0" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Alocação*:</TextBlock>
                             </Border>
-                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="4" Grid.Column="1" Text="{Binding Alocacao}" />
+                            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="5" Grid.Column="1" Text="{Binding Alocacao}" />
                         </Grid>
 
 
@@ -210,7 +216,17 @@
                             <Border Margin="5" Grid.Row="0" Grid.Column="2" Background="LightGray" Padding="5">
                                 <TextBlock VerticalAlignment="Center">Jornada*:</TextBlock>
                             </Border>
-                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Jornadas}" SelectedItem="{Binding JornadaSelecionada}" DisplayMemberPath="Descricao" />
+                            <ComboBox VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Jornadas}" SelectedItem="{Binding JornadaSelecionada}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Horas}" />
+                                            <TextBlock Text=" " />
+                                            <TextBlock Text="{Binding TipoJornada.Descricao}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </Grid>
                     </Grid>
                 </GroupBox>
@@ -220,9 +236,20 @@
                         <Button Command="{Binding SalvarCommand}">Salvar Processo</Button>
                     </StackPanel>
                 </GroupBox>
-            </Grid>
 
-            <mah:ProgressRing IsActive="{Binding IsBusy}" />
+                <mah:ProgressRing Grid.RowSpan="3" Grid.ColumnSpan="2" IsActive="{Binding IsBusy}" />
+
+                <ScrollViewer Grid.Row="3" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <DataGrid ItemsSource="{Binding ContratosSalvos}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="Auto" IsReadOnly="True" Header="Numero" Binding="{Binding ContratoId}" />
+                            <DataGridTextColumn Width="Auto" IsReadOnly="True" Header="Funcionario" Binding="{Binding Funcionario.Nome}" />
+                            <DataGridTextColumn Width="Auto" IsReadOnly="True" Header="Rg" Binding="{Binding Funcionario.Rg}" />
+                            <DataGridTextColumn Width="Auto" IsReadOnly="True" Header="Cpf" Binding="{Binding Funcionario.Cpf}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+            </Grid>
         </Grid>
     </ScrollViewer>
 </mah:MetroWindow>

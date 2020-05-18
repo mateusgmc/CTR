@@ -12,9 +12,11 @@
 
         public string OrgExp { get; set; }
 
-        public string EstadoCivil { get; set; }
+        public virtual EstadoCivil EstadoCivil { get; set; }
+        public int EstadoCivilId { get; set; }
 
-        public string Naturalidade { get; set; }
+        public virtual Naturalidade Naturalidade { get; set; }
+        public int NaturalidadeId { get; set; }
 
         public virtual Estado Estado { get; set; }
         public int EstadoId { get; set; }
