@@ -1,10 +1,6 @@
-﻿using CTR.Infrastructure.Repository;
-using CTR.ViewModels;
-using MahApps.Metro.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,14 +15,18 @@ using System.Windows.Shapes;
 namespace CTR.Views
 {
     /// <summary>
-    /// Lógica interna para CadastroContratoWindow.xaml
+    /// Lógica interna para ExemploSemMVVMWindow.xaml
     /// </summary>
-    public partial class CadastroContratoWindow : MetroWindow
+    public partial class ExemploSemMVVMWindow : Window
     {
-        public CadastroContratoWindow()
+        public ExemploSemMVVMWindow()
         {
             InitializeComponent();
-            DataContext = new CadastroContratoViewModel(new Repository(), DispatcherScheduler.Current);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

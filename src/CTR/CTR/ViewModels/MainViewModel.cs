@@ -3,9 +3,9 @@ using CTR.Infrastructure.Repository;
 
 namespace CTR.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ReactiveViewModelBase
     {
-        public MainViewModel(IRepository repository, DispatcherScheduler uiDispatcherScheduler)
+        public MainViewModel(IReactiveRepository repository, DispatcherScheduler uiDispatcherScheduler)
             : base(repository, uiDispatcherScheduler)
         {
         }

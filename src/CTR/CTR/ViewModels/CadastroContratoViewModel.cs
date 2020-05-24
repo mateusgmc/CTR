@@ -1,315 +1,106 @@
 ﻿using CTR.Infrastructure.Repository;
 using CTR.Models.POCO;
-using CTR.Utils;
+using Prism.Commands;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 
 namespace CTR.ViewModels
 {
-    public class CadastroContratoViewModel : ViewModelBase
+    public class CadastroContratoViewModel : BaseViewModel
     {
-        public CadastroContratoViewModel(IRepository repository, DispatcherScheduler dispatcherScheduler)
-            : base(repository, dispatcherScheduler)
+        public CadastroContratoViewModel() : base(new Repository())
         {
-            // NOTE: Inicialização dos campos
+            var contratos = Repository.GetAll<Contrato>();
+            foreach (var contrato in contratos)
+            {
+                ContratosSalvos.Add(contrato);
+            }
 
-            // Carrega os contratos do banco
-            Repository.GetAll<Contrato>()
-                .Busy(this)
-                .Subscribe(contratos =>
-                {
-                    foreach (var contrato in contratos)
-                    {
-                        ContratosSalvos.Add(contrato);
-                    }
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            var naturalidades = Repository.GetAll<Naturalidade>();
+            foreach (var naturalidade in naturalidades)
+            {
+                Naturalidades.Add(naturalidade);
+            }
 
-            // Carrega as naturalidades do banco de maneira assíncrona
-            Repository.GetAll<Naturalidade>()
-                .Busy(this)
-                .Subscribe(naturalidades =>
-                {
-                    foreach (var naturalidade in naturalidades)
-                    {
-                        Naturalidades.Add(naturalidade);
-                    }
-                    NaturalidadeSelecionada = Naturalidades.First();
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            var estadosCivis = Repository.GetAll<EstadoCivil>();
+            foreach (var estadoCivil in estadosCivis)
+            {
+                EstadosCivis.Add(estadoCivil);
+            }
+            EstadoCivilSelecionado = EstadosCivis.First();
 
-            Repository.GetAll<EstadoCivil>()
-                .Busy(this)
-                .Subscribe(estadosCivis =>
-                {
-                    foreach (var estadoCivil in estadosCivis)
-                    {
-                        EstadosCivis.Add(estadoCivil);
-                    }
-                    EstadoCivilSelecionado = EstadosCivis.First();
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            var estados = Repository.GetAll<Estado>();
+            foreach (var estado in estados)
+            {
+                Estados.Add(estado);
+            }
 
-            // Carrega os estados do banco de maneira assíncrona
-            Repository.GetAll<Estado>()
-                .Busy(this)
-                .Subscribe(estados =>
-                {
-                    foreach(var estado in estados)
-                    {
-                        Estados.Add(estado);
-                    }
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            var bairros = Repository.GetAll<Bairro>();
+            foreach (var bairro in bairros)
+            {
+                Bairros.Add(bairro);
+            }
 
-            // Carrega os bairros do banco de maneira assíncrona
-            Repository.GetAll<Bairro>()
-                .Busy(this)
-                .Subscribe(bairros =>
-                {
-                    foreach (var bairro in bairros)
-                    {
-                        Bairros.Add(bairro);
-                    }
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            var cidades = Repository.GetAll<Cidade>();
+            foreach (var cidade in cidades)
+            {
+                Cidades.Add(cidade);
+            }
 
-            // Carrega os cidades do banco de maneira assíncrona
-            Repository.GetAll<Cidade>()
-                .Busy(this)
-                .Subscribe(cidades =>
-                {
-                    foreach (var cidade in cidades)
-                    {
-                        Cidades.Add(cidade);
-                    }
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            var secretarias = Repository.GetAll<Secretaria>();
+            foreach (var secretaria in secretarias)
+            {
+                Secretarias.Add(secretaria);
+            }
 
-            // Carrega as secretarias do banco de maneira assíncrona
-            Repository.GetAll<Secretaria>()
-                .Busy(this)
-                .Subscribe(secretarias =>
-                {
-                    foreach (var secretaria in secretarias)
-                    {
-                        Secretarias.Add(secretaria);
-                    }
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            var jornadas = Repository.GetAll<Jornada>();
+            foreach (var jornada in jornadas)
+            {
+                Jornadas.Add(jornada);
+            }
 
-            // Carrega as jornadas do banco de maneira assíncrona
-            Repository.GetAll<Jornada>()
-                .Busy(this)
-                .Subscribe(jornadas =>
-                {
-                    foreach (var jornada in jornadas)
-                    {
-                        Jornadas.Add(jornada);
-                    }
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            SalvarCommand = new DelegateCommand(SalvarExecute);
 
 
-            // NOTE: Validação dos campos.
-            // Para cada campo abaixo é criado um fluxo que verifica se o campo está preenchido. Caso não esteja
-            // uma notificação de erro será propagada. O fluxo é acionado de maneira reativa, através da interação
-            // do usuário na aplicação.
-
-            var nomeHasErrors = this.WhenAnyValue(s => s.Nome, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(nomeHasErrors, nameof(Nome));
-
-
-            var cpfHasErros = this.WhenAnyValue(s => s.Cpf, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(cpfHasErros, nameof(Cpf));
-
-
-            var rgHasErros = this.WhenAnyValue(s => s.Rg, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(rgHasErros, nameof(Rg));
-
-
-            var orgExpHasErros = this.WhenAnyValue(s => s.OrgExp, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(orgExpHasErros, nameof(OrgExp));
-
-
-            var enderecoHasErros = this.WhenAnyValue(s => s.Endereco, texto => string.IsNullOrEmpty(texto));
-            ObservarErroCampoObrigatorio(enderecoHasErros, nameof(Endereco));
-
-
-            var estadoCivilHasErros = this.WhenAny(s => s.EstadoCivilSelecionado, e => e.Value is null);
-
-
-            var naturalidadeHasErros = this.WhenAny(s => s.NaturalidadeSelecionada, e => e.Value is null);
-
-
-            var estadoHasErros = this.WhenAny(s => s.EstadoSelecionado, e => e.Value is null);
-
-
-            var bairroHasErros = this.WhenAny(s => s.BairroSelecionado, e => e.Value is null);
-
-
-            var cidadeHasErros = this.WhenAny(s => s.CidadeSelecionada, e => e.Value is null);
-
-
-            var secretariaHasErros = this.WhenAny(s => s.SecretariaSelecionada, e => e.Value is null);
-
-
-            var orgaoHasErros = this.WhenAny(s => s.OrgaoSelecionado, e => e.Value is null);
-
-
-            var deparmentoHasErros = this.WhenAny(s => s.DepartamentoSelecionado, e => e.Value is null);
-
-
-            var dotacaoHasErros = this.WhenAny(s => s.DotacaoSelecionado, e => e.Value is null);
-
-
-            var descricaoVinculoHasErros = this.WhenAny(s => s.DescricaoVinculoSelecionado, e => e.Value is null);
-
-
-            var cargoHasErros = this.WhenAny(s => s.CargoSelecionado, e => e.Value is null);
-
-            var jornadaHasErros = this.WhenAny(s => s.JornadaSelecionada, e => e.Value is null);
-
-
-            // Criamos um fluxo que é a combinação de todos os fluxos de validação acima.
-            // Caso algum fluxo apresente o valor verdadeiro, isto é, caso algum fluxo notifique uma mensagem de erro,
-            // este fluxo irá propagar uma notificação que fará com que o comando abaixo não possa ser executado.
-
-            var salvarCanExecute = Observable.CombineLatest(
-                    this.WhenAnyValue(s => s.IsBusy),
-                    nomeHasErrors,
-                    cpfHasErros,
-                    rgHasErros,
-                    orgExpHasErros,
-                    estadoCivilHasErros,
-                    naturalidadeHasErros,
-                    estadoHasErros,
-                    enderecoHasErros,
-                    bairroHasErros,
-                    cidadeHasErros,
-                    secretariaHasErros,
-                    orgaoHasErros,
-                    deparmentoHasErros,
-                    dotacaoHasErros,
-                    descricaoVinculoHasErros,
-                    cargoHasErros,
-                    jornadaHasErros)
-                .Select(observables => !observables.Any(r => r == true));
-
-            SalvarCommand = ReactiveCommand.Create(SalvarExecute, salvarCanExecute);
-
-
-
-            // Regras de negócio
-
-            // Ao selecionar uma nova secretaria carregamos dados referentes a esta secretaria
             this.WhenAnyValue(s => s.SecretariaSelecionada)
                 .Subscribe(newSecretaria =>
                 {
-                    if(newSecretaria != null)
+                    if (newSecretaria != null)
                     {
-                        Repository.Get<DescricaoVinculo>(e => e.SecretariaId == newSecretaria.SecretariaId)
-                            .Busy(this)
-                            .Subscribe(descricaoVinculos =>
-                            {
-                                foreach(var descricaoVinculo in descricaoVinculos)
-                                {
-                                    DescricaoVinculos.Add(descricaoVinculo);
-                                }
-                            },
-                            ex =>
-                            {
-                                System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                            });
+                        var descricaoVinculos = Repository.Get<DescricaoVinculo>(e => e.SecretariaId == newSecretaria.SecretariaId);
+                        foreach (var descricaoVinculo in descricaoVinculos)
+                        {
+                            DescricaoVinculos.Add(descricaoVinculo);
+                        }
 
-                        Repository.Get<Orgao>(e => e.SecretariaId == newSecretaria.SecretariaId)
-                            .Busy(this)
-                            .Subscribe(orgaos =>
-                            {
-                                foreach (var orgao in orgaos)
-                                {
-                                    Orgaos.Add(orgao);
-                                }
-                            },
-                            ex =>
-                            {
-                                System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                            });
+                        var orgaos = Repository.Get<Orgao>(e => e.SecretariaId == newSecretaria.SecretariaId);
+                        foreach (var orgao in orgaos)
+                        {
+                            Orgaos.Add(orgao);
+                        }
 
-                        Repository.Get<Departamento>(e => e.SecretariaId == newSecretaria.SecretariaId)
-                            .Busy(this)
-                            .Subscribe(departamentos =>
-                            {
-                                foreach (var departamento in departamentos)
-                                {
-                                    Departamentos.Add(departamento);
-                                }
-                            },
-                            ex =>
-                            {
-                                System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                            });
+                        var departamentos = Repository.Get<Departamento>(e => e.SecretariaId == newSecretaria.SecretariaId);
+                        foreach (var departamento in departamentos)
+                        {
+                            Departamentos.Add(departamento);
+                        }
 
-                        Repository.Get<Dotacao>(e => e.SecretariaId == newSecretaria.SecretariaId)
-                            .Busy(this)
-                            .Subscribe(dotacoes =>
-                            {
-                                foreach (var dotacao in dotacoes)
-                                {
-                                    Dotacoes.Add(dotacao);
-                                }
-                            },
-                            ex =>
-                            {
-                                System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                            });
+                        var dotacoes = Repository.Get<Dotacao>(e => e.SecretariaId == newSecretaria.SecretariaId);
+                        foreach (var dotacao in dotacoes)
+                        {
+                            Dotacoes.Add(dotacao);
+                        }
 
-                        Repository.Get<Cargo>(e => e.SecretariaId == newSecretaria.SecretariaId)
-                            .Busy(this)
-                            .Subscribe(cargos =>
-                            {
-                                foreach (var cargo in cargos)
-                                {
-                                    Cargos.Add(cargo);
-                                }
-                            },
-                            ex =>
-                            {
-                                System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                            });
+                        var cargos = Repository.Get<Cargo>(e => e.SecretariaId == newSecretaria.SecretariaId);
+                        foreach (var cargo in cargos)
+                        {
+                            Cargos.Add(cargo);
+                        }
                     }
                 });
         }
-
 
         public string Nome { get; set; }
 
@@ -377,7 +168,7 @@ namespace CTR.ViewModels
 
 
 
-        public ReactiveCommand<Unit, Unit> SalvarCommand { get; }
+        public DelegateCommand SalvarCommand { get; }
 
 
 
@@ -415,20 +206,12 @@ namespace CTR.ViewModels
                 VigenciaFim = VigenciaFim
             };
 
-            Repository.AddOrUpdate<Contrato>(contrato)
-                .Busy(this)
-                .Subscribe(e =>
-                {
-                    System.Windows.Forms.MessageBox.Show("Contrato salvo com sucesso!");
-                    if (!ContratosSalvos.Contains(contrato))
-                    {
-                        ContratosSalvos.Add(contrato);
-                    }
-                },
-                ex =>
-                {
-                    System.Windows.Forms.MessageBox.Show(ex.Message, "Erro");
-                });
+            Repository.AddOrUpdate(contrato);
+
+            if (!ContratosSalvos.Contains(contrato))
+            {
+                ContratosSalvos.Add(contrato);
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace CTR.Utils
 {
     public static class ObservableExtension
     {
-        public static IObservable<T> Busy<T>(this IObservable<T> observable, ViewModelBase viewModel, IScheduler scheduler)
+        public static IObservable<T> Busy<T>(this IObservable<T> observable, ReactiveViewModelBase viewModel, IScheduler scheduler)
         {
             var stream = Observable.Create<T>(obs =>
             {
@@ -30,7 +30,7 @@ namespace CTR.Utils
             return stream.SubscribeOn(viewModel.UiDispatcherScheduler);
         }
 
-        public static IObservable<T> Busy<T>(this IObservable<T> observable, ViewModelBase viewModel)
+        public static IObservable<T> Busy<T>(this IObservable<T> observable, ReactiveViewModelBase viewModel)
             => Busy(observable, viewModel, NewThreadScheduler.Default);
     }
 }

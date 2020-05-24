@@ -1,21 +1,20 @@
 ﻿using CTR.Infrastructure.Repository;
-using ReactiveUI;
 using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 namespace CTR.ViewModels
 {
-    public abstract class ViewModelBase : NotifyErrorInfoViewModel
+    public abstract class ReactiveViewModelBase : NotifyErrorInfoViewModel
     {
-        public readonly IRepository Repository;
-        public readonly DispatcherScheduler UiDispatcherScheduler;
-
-        protected ViewModelBase(IRepository repository, DispatcherScheduler uiDispatcherScheduler)
+        protected ReactiveViewModelBase(IReactiveRepository repository, DispatcherScheduler uiDispatcherScheduler)
         {
             Repository = repository;
             UiDispatcherScheduler = uiDispatcherScheduler;
         }
+
+        public IReactiveRepository Repository { get; }
+        public DispatcherScheduler UiDispatcherScheduler { get; }
 
         public int ObservingCount { get; set; }
 

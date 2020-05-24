@@ -16,17 +16,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace CTR.Views
+namespace CTR.Views.Legado
 {
     /// <summary>
-    /// Lógica interna para MainWindow.xaml
+    /// Lógica interna para CadastroContratoWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class CadastroContratoWindow : MetroWindow
     {
-        public MainWindow()
+        public CadastroContratoWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel(new ReactiveRepository(), DispatcherScheduler.Current);
         }
     }
 }

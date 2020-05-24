@@ -112,6 +112,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Infrastructure\QueryableExtension.cs" />
+    <Compile Include="Infrastructure\Repository\IRepository.cs" />
+    <Compile Include="Infrastructure\Repository\Repository.cs" />
     <Compile Include="Migrations\202005180347120_Initial.cs" />
     <Compile Include="Migrations\202005180347120_Initial.designer.cs">
       <DependentUpon>202005180347120_Initial.cs</DependentUpon>
@@ -125,11 +127,13 @@
     <Compile Include="Models\POCO\Naturalidade.cs" />
     <Compile Include="Models\POCO\TipoJornada.cs" />
     <Compile Include="Utils\ObservableExtension.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CadastroContratoViewModel.cs" />
+    <Compile Include="ViewModels\ReactiveCadastroContratoViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NotifyErrorInfoViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Views\CadastroContratoWindow.xaml.cs">
+    <Compile Include="ViewModels\ReactiveViewModelBase.cs" />
+    <Compile Include="Views\Legado\CadastroContratoWindow.xaml.cs">
       <DependentUpon>CadastroContratoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -140,8 +144,8 @@
     <Compile Include="Infrastructure\ContextFactory.cs" />
     <Compile Include="Infrastructure\CTRContext.cs" />
     <Compile Include="Infrastructure\Initializers\CTRInitializer.cs" />
-    <Compile Include="Infrastructure\Repository\IRepository.cs" />
-    <Compile Include="Infrastructure\Repository\Repository.cs" />
+    <Compile Include="Infrastructure\Repository\IReactiveRepository.cs" />
+    <Compile Include="Infrastructure\Repository\ReactiveRepository.cs" />
     <Compile Include="Models\POCO\Bairro.cs" />
     <Compile Include="Models\POCO\Cargo.cs" />
     <Compile Include="Models\POCO\Cidade.cs" />
@@ -188,7 +192,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Page Include="Views\CadastroContratoWindow.xaml">
+    <Page Include="Views\Legado\CadastroContratoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
